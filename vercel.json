@@ -1,4 +1,11 @@
 {
-  "buildCommand": "npm run build",
-  "framework": "create-react-app"
+  "buildCommand": "npm install && node build.js",
+  "framework": "create-react-app",
+  "installCommand": "npm install",
+  "build": {
+    "env": {
+      "NODE_OPTIONS": "--no-deprecation",
+      "NODE_NO_WARNINGS": "1"
+    }
+  }
 }
