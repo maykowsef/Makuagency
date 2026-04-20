@@ -1,0 +1,7 @@
+{
+  "buildCommand": "npm run build",
+  "buildEnv": {
+    "NODE_OPTIONS": "--no-deprecation"
+  },
+  "framework": "create-react-app"
+}
