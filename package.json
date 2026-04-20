@@ -14,7 +14,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "cross-env NODE_OPTIONS=--no-deprecation react-scripts build",
+    "build": "node build.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
