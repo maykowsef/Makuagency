@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/supabase-api.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/supabase-api.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "SUPABASE_URL": "https://snswadioooqitikqmxjl.supabase.co",
+    "SUPABASE_ANON_KEY": "sb_publishable_jBwIe7SlVBjnnb0RoKrs3w_YcwjzFWD"
+  }
+}
