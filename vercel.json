@@ -1,7 +1,7 @@
 {
-  "buildCommand": "npm install && node build.js",
+  "buildCommand": "npm ci --force && node build.js",
   "framework": "create-react-app",
-  "installCommand": "npm install",
+  "installCommand": "npm ci --force",
   "build": {
     "env": {
       "NODE_OPTIONS": "--no-deprecation",
