@@ -1,0 +1,244 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── CORE ENTITIES ───────────────────────────────────────────────
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  avatar    String?
+  password  String
+  role      String   @default("Admin") // "Admin", "Manager", "Sales"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Company {
+  id            Int             @id @default(autoincrement())
+  name          String
+  siret         String?
+  address       String?
+  city          String?
+  country       String?
+  email         String?
+  phone         String?
+  website       String?
+  logo          String?
+  industry      String?
+  createdAt     DateTime        @default(now())
+  status        String          @default("Active")
+  sellingPoints SellingPoint[]
+}
+
+model SellingPoint {
+  id            Int             @id @default(autoincrement())
+  companyId     Int
+  company       Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  name          String
+  siret         String?
+  businessType  String          // "Used Car Dealer", "Real Estate Agency", "Clothing Boutique", etc.
+  industry      String?         // "automotive", "real-estate", "clothing"
+  
+  // Generic Contact & Address Info
+  street        String?
+  city          String?
+  postalCode    String?
+  country       String?
+  email         String?
+  website       String?
+  description   String?         @db.Text
+  status        String          @default("Active")
+  priority      String          @default("Medium")
+  
+  // Storing phones, logos, and raw history as structured JSON for flexibility
+  phones        Json?          // Array of { id, number, type, isPrimary } 
+  logoHistory   Json?          // Array of past logos
+  socialMedia   Json?          // Array of { platform, url, isPrimary }
+  notes         Json?          // Array of internal notes
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  // Relationships
+  minisites          Minisite[]
+  announcementProfiles AnnouncementProfile[]
+  assignments        ContactAssignment[]
+}
+
+model Contact {
+  id            Int                  @id @default(autoincrement())
+  name          String?              // Full name for legacy support
+  firstName     String?
+  lastName      String?
+  email         String?
+  phone         String?
+  role          String?              // e.g. "CEO", "Manager"
+  jobTitle      String?
+  company       String?              // Legacy company name support
+  avatar        String?
+  status        String               @default("Active")
+  notes         String?              @db.Text
+  
+  // Structured data stored as JSON for flexibility
+  social        Json?                // { linkedin, instagram, etc }
+  psychofile    Json?                // { type, color, mbti, etc }
+  
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  assignments   ContactAssignment[]
+}
+
+// Join table for SellingPoint <-> Contact
+model ContactAssignment {
+  id              Int           @id @default(autoincrement())
+  contactId       Int
+  contact         Contact       @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  sellingPointId  Int
+  sellingPoint    SellingPoint  @relation(fields: [sellingPointId], references: [id], onDelete: Cascade)
+  role            String        @default("Contact") // "Primary Contact", "Manager", etc.
+  assignedAt      DateTime      @default(now())
+
+  @@unique([contactId, sellingPointId])
+}
+
+// ─── FEATURES: MINISITES & STOCK ────────────────────────────────────────
+
+model Minisite {
+  id              Int           @id @default(autoincrement())
+  sellingPointId  Int
+  sellingPoint    SellingPoint  @relation(fields: [sellingPointId], references: [id], onDelete: Cascade)
+  
+  domain          String        @unique
+  templateId      String        // e.g. "car-dealer-modern"
+  businessType    String?
+  isActive        Boolean       @default(true)
+  
+  // Stores dynamic template settings (colors, logo, custom inputs)
+  overrides       Json?         
+
+  publishedAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model AnnouncementProfile {
+  id              Int           @id @default(autoincrement())
+  sellingPointId  Int
+  sellingPoint    SellingPoint  @relation(fields: [sellingPointId], references: [id], onDelete: Cascade)
+  
+  siteId          String        // "leboncoin", "zoopla", "vinted", "autotrader"
+  platform        String        // "Leboncoin", "Zoopla", "Vinted"
+  url             String?
+  targetListings  Int           @default(0)
+  isPrimary       Boolean       @default(false)
+  
+  stockListings   StockListing[]
+}
+
+model StockListing {
+  id              Int                   @id @default(autoincrement())
+  profileId       Int
+  profile         AnnouncementProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  // Universal base fields
+  reference       String?
+  name            String                // Name of item/vehicle/property
+  price           Float?
+  url             String?
+  description     String?               @db.Text
+  imageUrls       Json?                 // Array of image links
+
+  // INDUSTRY-SPECIFIC FIELDS stored dynamically
+  // For Real Estate: { propertyType: "House", surface: 120, bedrooms: 3, energyRating: "A" }
+  // For Clothing: { clothingCategory: "Sneakers", brand: "Nike", size: "42", condition: "New" }
+  // For Cars: { vehicleType: "SUV", mileage: 50000, fuelType: "Diesel", year: 2020 }
+  attributes      Json?
+
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+}
+
+model Schedule {
+  id                Int      @id @default(autoincrement())
+  sellingPointId    Int
+  sellingPointName  String
+  date              DateTime
+  scheduler         String
+  schedulerId       Int
+  status            String   @default("Pending") // "Pending", "Completed", "Cancelled", "Convinced"
+  isConvinced       Boolean  @default(false)
+  notified          Boolean  @default(false)
+  calls             Json?    // Array of { date, duration, notes, result }
+  rescheduleHistory Json?    // Array of { oldDate, reason, changedBy }
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Task {
+  id              Int      @id @default(autoincrement())
+  title           String
+  description     String?  @db.Text
+  assignedTo      Json?    // Array of user IDs
+  createdBy       Int
+  status          String   @default("Pending") // "Pending", "In Progress", "Completed", "Faulty"
+  city            String?
+  type            String?  // "Analysis", "Creation", "Recheck"
+  targetCount     Int?
+  currentCount    Int?
+  targetIds       Json?    // Array of IDs
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model WorkAssignment {
+  id                Int      @id @default(autoincrement())
+  type              String   // e.g. "pre_integration"
+  assignedTo        Int
+  status            String   @default("Pending")
+  followUpCreated   Boolean  @default(false)
+  data              Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Activity {
+  id          Int      @id @default(autoincrement())
+  type        String
+  description String
+  performedBy Json?    // { name, id }
+  metadata    Json?
+  timestamp   DateTime @default(now())
+}
+
+model InventoryItem {
+  id              Int      @id @default(autoincrement())
+  sellingPointId  Int?
+  name            String
+  make            String?
+  model           String?
+  year            Int?
+  price           Float?
+  fuel            String?
+  mileage         Int?
+  transmission    String?
+  image           String?
+  description     String?  @db.Text
+  features        Json?    // Array of strings
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+

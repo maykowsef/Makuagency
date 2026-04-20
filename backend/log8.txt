@@ -1,0 +1,105 @@
+﻿Ôùç injected env (2) from .env // tip: Ôîÿ custom filepath { path: '/custom/path/.env' }
+Server running on port 5000
+2026-04-12T09:10:56.789Z - GET /api/selling-points
+node : TypeError: Cannot 
+convert undefined or null 
+to object
+At line:1 char:125
++ ... e -Force 
+-ErrorAction 
+SilentlyContinue; node 
+server.js > log.txt 2>&1
++                          
+                   ~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecified: (Typ  
+  eError: Cann... null t   
+ o object:String) [], R    
+emoteException
+    + FullyQualifiedErrorI 
+   d : NativeCommandError
+ 
+    at Function.keys 
+(<anonymous>)
+    at C:\Users\makrem\Desk
+top\crm-deepseek\crm-deepse
+ek\backend\server.js:23:14
+    at Layer.handleRequest 
+(C:\Users\makrem\Desktop\cr
+m-deepseek\crm-deepseek\bac
+kend\node_modules\router\li
+b\layer.js:152:17)
+    at trimPrefix (C:\Users
+\makrem\Desktop\crm-deepsee
+k\crm-deepseek\backend\node
+_modules\router\index.js:34
+2:13)
+    at C:\Users\makrem\Desk
+top\crm-deepseek\crm-deepse
+ek\backend\node_modules\rou
+ter\index.js:297:9
+    at processParams (C:\Us
+ers\makrem\Desktop\crm-deep
+seek\crm-deepseek\backend\n
+ode_modules\router\index.js
+:582:12)
+    at next (C:\Users\makre
+m\Desktop\crm-deepseek\crm-
+deepseek\backend\node_modul
+es\router\index.js:291:5)
+    at SendStream.error (C:
+\Users\makrem\Desktop\crm-d
+eepseek\crm-deepseek\backen
+d\node_modules\serve-static
+\index.js:120:7)
+    at SendStream.emit 
+(node:events:518:28)
+    at SendStream.error (C:
+\Users\makrem\Desktop\crm-d
+eepseek\crm-deepseek\backen
+d\node_modules\send\index.j
+s:168:17)
+2026-04-12T09:12:31.902Z - GET /api/selling-points
+TypeError: Cannot convert 
+undefined or null to object
+    at Function.keys 
+(<anonymous>)
+    at C:\Users\makrem\Desk
+top\crm-deepseek\crm-deepse
+ek\backend\server.js:23:14
+    at Layer.handleRequest 
+(C:\Users\makrem\Desktop\cr
+m-deepseek\crm-deepseek\bac
+kend\node_modules\router\li
+b\layer.js:152:17)
+    at trimPrefix (C:\Users
+\makrem\Desktop\crm-deepsee
+k\crm-deepseek\backend\node
+_modules\router\index.js:34
+2:13)
+    at C:\Users\makrem\Desk
+top\crm-deepseek\crm-deepse
+ek\backend\node_modules\rou
+ter\index.js:297:9
+    at processParams (C:\Us
+ers\makrem\Desktop\crm-deep
+seek\crm-deepseek\backend\n
+ode_modules\router\index.js
+:582:12)
+    at next (C:\Users\makre
+m\Desktop\crm-deepseek\crm-
+deepseek\backend\node_modul
+es\router\index.js:291:5)
+    at SendStream.error (C:
+\Users\makrem\Desktop\crm-d
+eepseek\crm-deepseek\backen
+d\node_modules\serve-static
+\index.js:120:7)
+    at SendStream.emit 
+(node:events:518:28)
+    at SendStream.error (C:
+\Users\makrem\Desktop\crm-d
+eepseek\crm-deepseek\backen
+d\node_modules\send\index.j
+s:168:17)
