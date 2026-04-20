@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-    ArrowLeft, Mail, Phone, MapPin, Linkedin, Facebook, Instagram,
+    ArrowLeft, Mail, Phone, MapPin, Globe,
     Building2, Map, Tag, Circle, User, Edit, Trash2, Brain, X, Copy, Eye, Plus
 } from 'lucide-react';
 import { COUNTRIES } from '../../data/constants';
@@ -187,17 +187,17 @@ const ContactDetail = ({
                         <div className="flex justify-center gap-2">
                             {contact.social?.linkedin && (
                                 <a href={contact.social.linkedin} target="_blank" rel="noreferrer" className="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all border border-transparent hover:border-blue-100">
-                                    <Linkedin className="w-5 h-5" />
+                                    <Globe className="w-5 h-5" />
                                 </a>
                             )}
                             {contact.social?.facebook && (
                                 <a href={contact.social.facebook} target="_blank" rel="noreferrer" className="p-2.5 text-gray-400 hover:text-blue-700 hover:bg-blue-50 rounded-xl transition-all border border-transparent hover:border-blue-100">
-                                    <Facebook className="w-5 h-5" />
+                                    <Globe className="w-5 h-5" />
                                 </a>
                             )}
                             {contact.social?.instagram && (
                                 <a href={contact.social.instagram} target="_blank" rel="noreferrer" className="p-2.5 text-gray-400 hover:text-pink-600 hover:bg-pink-50 rounded-xl transition-all border border-transparent hover:border-pink-100">
-                                    <Instagram className="w-5 h-5" />
+                                    <Globe className="w-5 h-5" />
                                 </a>
                             )}
                         </div>

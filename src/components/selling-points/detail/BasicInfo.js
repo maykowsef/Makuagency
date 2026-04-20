@@ -1,5 +1,5 @@
 import React from 'react';
-import { Building2, Edit, User, Mail, Globe, Hash, Clock, Phone, ExternalLink, MessageSquare, Instagram, Facebook, Music, Calendar } from 'lucide-react';
+import { Building2, Edit, User, Mail, Globe, Hash, Clock, Phone, ExternalLink, MessageSquare, Music, Calendar } from 'lucide-react';
 
 const BasicInfo = ({ sp, onEdit, onNavigate, companies, setEditSection, setEditingItem, setShowEditModal }) => {
     return (
@@ -110,8 +110,8 @@ const BasicInfo = ({ sp, onEdit, onNavigate, companies, setEditSection, setEditi
                                     <div className="flex items-center gap-2">
                                         <Mail className={`w-3 h-3 ${sp.currentSchedule.emailSent ? 'text-blue-500' : 'text-gray-300'}`} />
                                         <MessageSquare className={`w-3 h-3 ${sp.currentSchedule.whatsappSent ? 'text-green-500' : 'text-gray-300'}`} />
-                                        <Instagram className={`w-3 h-3 ${sp.currentSchedule.instagramSent ? 'text-pink-500' : 'text-gray-300'}`} />
-                                        <Facebook className={`w-3 h-3 ${sp.currentSchedule.facebookSent ? 'text-indigo-500' : 'text-gray-300'}`} />
+                                        <Globe className={`w-3 h-3 ${sp.currentSchedule.instagramSent ? 'text-pink-500' : 'text-gray-300'}`} />
+                                        <Globe className={`w-3 h-3 ${sp.currentSchedule.facebookSent ? 'text-indigo-500' : 'text-gray-300'}`} />
                                         <Music className={`w-3 h-3 ${sp.currentSchedule.tiktokSent ? 'text-slate-900' : 'text-gray-300'}`} />
                                     </div>
                                 </div>

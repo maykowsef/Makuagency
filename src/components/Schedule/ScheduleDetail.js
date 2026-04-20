@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
     ArrowLeft, Globe, Plus, Phone, Clock, FileText, Mic, Calendar,
     Trash2, Edit3, CheckCircle, XCircle, History, Upload, Lightbulb, Copy, MessageSquare,
-    Mail, Send, Check, User, Instagram, Facebook, Music, ExternalLink
+    Mail, Send, Check, User, Music, ExternalLink
 } from 'lucide-react';
 
 const ScheduleDetail = ({ scheduleId, schedules = [], minisites = [], customTemplates = [], onBack, onAddCall, onReschedule, onUpdate, onDelete, onNavigateToMinisite, viewParams, onNavigate }) => {
@@ -136,8 +136,8 @@ const ScheduleDetail = ({ scheduleId, schedules = [], minisites = [], customTemp
                             {[
                                 { id: 'emailSent', icon: Mail, label: 'Email', color: 'blue' },
                                 { id: 'whatsappSent', icon: MessageSquare, label: 'WhatsApp', color: 'green' },
-                                { id: 'instagramSent', icon: Instagram, label: 'Instagram', color: 'pink' },
-                                { id: 'facebookSent', icon: Facebook, label: 'Facebook', color: 'indigo' },
+                                { id: 'instagramSent', icon: Globe, label: 'Instagram', color: 'pink' },
+                                { id: 'facebookSent', icon: Globe, label: 'Facebook', color: 'indigo' },
                                 { id: 'tiktokSent', icon: Music, label: 'TikTok', color: 'slate' }
                             ].map(channel => (
                                 <button

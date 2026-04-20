@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, User, Filter, Globe, Phone, CheckCircle, XCircle, AlertCircle, Mail, MessageSquare, Instagram, Facebook, Music } from 'lucide-react';
+import { Calendar, Clock, User, Filter, Globe, Phone, CheckCircle, XCircle, AlertCircle, Mail, MessageSquare, Music } from 'lucide-react';
 
 const ScheduleDashboard = ({ schedules = [], onNavigate, minisites = [], userData, users = [] }) => {
     const isAdmin = userData?.role === 'Administrator';
@@ -225,8 +225,8 @@ const ScheduleDashboard = ({ schedules = [], onNavigate, minisites = [], userDat
                                 <div className="flex flex-wrap items-center gap-3">
                                     <Mail className={`w-3.5 h-3.5 ${schedule.emailSent ? 'text-blue-600' : 'text-gray-200'}`} title="Email Status" />
                                     <MessageSquare className={`w-3.5 h-3.5 ${schedule.whatsappSent ? 'text-green-600' : 'text-gray-200'}`} title="WhatsApp Status" />
-                                    <Instagram className={`w-3.5 h-3.5 ${schedule.instagramSent ? 'text-pink-600' : 'text-gray-200'}`} title="Instagram Status" />
-                                    <Facebook className={`w-3.5 h-3.5 ${schedule.facebookSent ? 'text-indigo-600' : 'text-gray-200'}`} title="Facebook Status" />
+                                    <Globe className={`w-3.5 h-3.5 ${schedule.instagramSent ? 'text-pink-600' : 'text-gray-200'}`} title="Instagram Status" />
+                                    <Globe className={`w-3.5 h-3.5 ${schedule.facebookSent ? 'text-indigo-600' : 'text-gray-200'}`} title="Facebook Status" />
                                     <Music className={`w-3.5 h-3.5 ${schedule.tiktokSent ? 'text-slate-900' : 'text-gray-200'}`} title="TikTok Status" />
                                 </div>
 

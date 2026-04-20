@@ -7,9 +7,7 @@ import {
     MapPin,
     Phone,
     Mail,
-    Facebook,
-    Instagram,
-    Twitter,
+    Globe,
     ArrowRight,
     Star,
     X,
@@ -341,9 +339,9 @@ const TemplateModernDark = ({ sellingPoint }) => {
                             <span>| ALL RIGHTS ARCHIVED</span>
                         </div>
                         <div className="flex items-center gap-6">
-                            <a href={facebookLink} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-all"><Facebook className="w-5 h-5" /></a>
-                            <a href={instagramLink} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-pink-600 hover:text-white transition-all"><Instagram className="w-5 h-5" /></a>
-                            <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-blue-400 hover:text-white transition-all"><Twitter className="w-5 h-5" /></a>
+                            <a href={facebookLink} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-all"><Globe className="w-5 h-5" /></a>
+                            <a href={instagramLink} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-pink-600 hover:text-white transition-all"><Globe className="w-5 h-5" /></a>
+                            <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-blue-400 hover:text-white transition-all"><Globe className="w-5 h-5" /></a>
                         </div>
                     </div>
                 </div>

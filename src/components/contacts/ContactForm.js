@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Save, X, User, Building2, Mail, Phone, MapPin, Linkedin, Facebook, Instagram, Brain } from 'lucide-react';
+import { ArrowLeft, Save, X, User, Building2, Mail, Phone, MapPin, Globe, Brain } from 'lucide-react';
 
 const ContactForm = ({ onSave, onCancel, initialData }) => {
     const [formData, setFormData] = useState({
@@ -296,7 +296,7 @@ const ContactForm = ({ onSave, onCancel, initialData }) => {
                 {/* Social Media */}
                 <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                        <Linkedin className="w-5 h-5 text-indigo-600" /> Social Media
+                        <Globe className="w-5 h-5 text-indigo-600" /> Social Media
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <input

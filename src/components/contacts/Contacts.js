@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Filter, ChevronLeft, ChevronRight, Mail, Phone, MapPin, Linkedin, Facebook, Instagram, Trash2, Edit, Plus } from 'lucide-react';
+import { Search, Filter, ChevronLeft, ChevronRight, Mail, Phone, MapPin, Globe, Trash2, Edit, Plus } from 'lucide-react';
 
 const Contacts = ({ onNavigate, contacts = [], onDelete }) => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -130,8 +130,8 @@ const Contacts = ({ onNavigate, contacts = [], onDelete }) => {
 
                         <div className="px-6 py-3 bg-gray-50 border-t border-gray-100 flex justify-end gap-2">
                             <div className="flex gap-2 text-gray-400">
-                                {contact.social?.linkedin && <Linkedin className="w-4 h-4 hover:text-blue-600 transition-colors" />}
-                                {contact.social?.instagram && <Instagram className="w-4 h-4 hover:text-pink-600 transition-colors" />}
+                                {contact.social?.linkedin && <Globe className="w-4 h-4 hover:text-blue-600 transition-colors" />}
+                                {contact.social?.instagram && <Globe className="w-4 h-4 hover:text-pink-600 transition-colors" />}
                             </div>
                         </div>
                     </div>

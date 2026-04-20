@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
     ArrowLeft, Save, MapPin, Building2, Phone, Mail, Globe,
     Search, X, Plus, Trash2, Edit, Image as ImageIcon, ExternalLink,
-    Bot, Facebook, Instagram, Linkedin, Twitter, Users, FileText, CheckCircle, ChevronDown, ChevronRight, Megaphone
+    Bot, Users, FileText, CheckCircle, ChevronDown, ChevronRight, Megaphone
 } from 'lucide-react';
 import {
     BUSINESS_TYPES, COUNTRIES, ANNOUNCEMENT_SITES, SOCIAL_PLATFORMS, FUEL_TYPES, VEHICLE_TYPES,

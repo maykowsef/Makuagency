@@ -5,7 +5,7 @@ import {
     MapPin,
     Phone,
     Mail,
-    Instagram,
+    Globe,
     Search,
     User,
     Menu,
@@ -318,7 +318,7 @@ const TemplateMinimalistWhite = ({ sellingPoint }) => {
                         <a href={`mailto:${email}`} className="hover:text-white transition-colors">Digital Direct</a>
                     </div>
                     <div className="flex items-center gap-6">
-                        <Instagram size={20} className="text-white/20 hover:text-white transition-colors cursor-pointer" />
+                        <Globe size={20} className="text-white/20 hover:text-white transition-colors cursor-pointer" />
                         <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/20">Follow the Heritage</span>
                     </div>
                 </div>
