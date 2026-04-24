@@ -1,11 +1,12 @@
-// API Configuration v3.0 - COMPLETELY HARDCODED
-// This bypasses ALL environment variables and caching issues
+// API Configuration v4.0 - BUILD TIMESTAMP: ${new Date().toISOString()}
+// COMPLETELY HARDCODED - This bypasses ALL environment variables and caching issues
 const API_BASE_URL = 'https://makuagencybackendproject.vercel.app/api';
 
 // Debug: Force logging to verify correct URL
-console.log('🔗🔗🔗 API BASE URL (HARDCODED v3.0):', API_BASE_URL);
-console.log('🔗🔗🔗 Current window origin:', window.location.origin);
-console.log('🔗🔗🔗 Environment variable override:', process.env.REACT_APP_API_URL);
+console.log('🔗🔗🔗🔗 API BASE URL (HARDCODED v4.0):', API_BASE_URL);
+console.log('🔗🔗🔗🔗 Current window origin:', window.location.origin);
+console.log('🔗🔗🔗🔗 Environment variable override:', process.env.REACT_APP_API_URL);
+console.log('🔗🔗🔗🔗 Build timestamp:', new Date().toISOString());
 
 // Override any attempts to use window.location
 const HARDCODED_API_BASE = 'https://makuagencybackendproject.vercel.app/api';
