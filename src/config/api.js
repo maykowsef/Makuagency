@@ -1,6 +1,6 @@
-// API Configuration
+// API Configuration v2.1.0
 const API_BASE_URL = 'https://makuagencybackendproject.vercel.app/api';
-console.log('🔗 API Base URL (Updated):', API_BASE_URL, new Date().toISOString());
+console.log('🔗 API Base URL (Updated v2.1.0):', API_BASE_URL, new Date().toISOString());
 
 console.log('🔗 API Base URL:', API_BASE_URL);
 
