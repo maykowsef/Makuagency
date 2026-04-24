@@ -129,25 +129,51 @@ app.delete('/contacts/:id', async (req, res) => {
 
 app.get('/selling-points', async (req, res) => {
   try {
+    console.log('📥 GET /selling-points request');
     const { data, error } = await supabase
       .from('selling_points')
       .select('*');
     
-    if (error) throw error;
-    res.json(data);
-  } catch (error) { handleError(res, error); }
+    if (error) {
+      console.log('❌ Supabase GET error:', error);
+      throw error;
+    }
+    
+    console.log('✅ Selling points retrieved:', data.length, 'items');
+    res.json(data || []);
+  } catch (error) { 
+    console.log('❌ API GET error:', error);
+    handleError(res, error); 
+  }
 });
 
 app.post('/selling-points', async (req, res) => {
   try {
+    console.log('📤 POST /selling-points request:', req.body);
+    
+    // Ensure required fields
+    const sellingPointData = {
+      ...req.body,
+      created_at: req.body.created_at || new Date().toISOString(),
+      last_modified: new Date().toISOString()
+    };
+    
     const { data, error } = await supabase
       .from('selling_points')
-      .insert([req.body])
+      .insert([sellingPointData])
       .select();
     
-    if (error) throw error;
+    if (error) {
+      console.log('❌ Supabase POST error:', error);
+      throw error;
+    }
+    
+    console.log('✅ Selling point created:', data[0]);
     res.json(data[0]);
-  } catch (error) { handleError(res, error); }
+  } catch (error) { 
+    console.log('❌ API POST error:', error);
+    handleError(res, error); 
+  }
 });
 
 app.put('/selling-points/:id', async (req, res) => {
@@ -155,27 +181,50 @@ app.put('/selling-points/:id', async (req, res) => {
     const { id } = req.params;
     const { id: _, ...updateData } = req.body;
     
+    updateData.last_modified = new Date().toISOString();
+    
+    console.log('📝 PUT /selling-points/', id, 'request:', updateData);
+    
     const { data, error } = await supabase
       .from('selling_points')
       .update(updateData)
       .eq('id', id)
       .select();
     
-    if (error) throw error;
+    if (error) {
+      console.log('❌ Supabase PUT error:', error);
+      throw error;
+    }
+    
+    console.log('✅ Selling point updated:', data[0]);
     res.json(data[0]);
-  } catch (error) { handleError(res, error); }
+  } catch (error) { 
+    console.log('❌ API PUT error:', error);
+    handleError(res, error); 
+  }
 });
 
 app.delete('/selling-points/:id', async (req, res) => {
   try {
+    const { id } = req.params;
+    console.log('🗑️ DELETE /selling-points/', id);
+    
     const { error } = await supabase
       .from('selling_points')
       .delete()
-      .eq('id', req.params.id);
+      .eq('id', id);
     
-    if (error) throw error;
+    if (error) {
+      console.log('❌ Supabase DELETE error:', error);
+      throw error;
+    }
+    
+    console.log('✅ Selling point deleted');
     res.sendStatus(204);
-  } catch (error) { handleError(res, error); }
+  } catch (error) { 
+    console.log('❌ API DELETE error:', error);
+    handleError(res, error); 
+  }
 });
 
 // Test endpoint
@@ -216,7 +265,27 @@ app.get('/inventory', async (req, res) => {
   res.json([]);
 });
 
+// Root endpoint for debugging
+app.get('/', async (req, res) => {
+  res.json({ 
+    message: 'Backend API is running!',
+    endpoints: [
+      '/api/test',
+      '/api/companies',
+      '/api/contacts', 
+      '/api/selling-points',
+      '/api/activities',
+      '/api/minisites',
+      '/api/schedules',
+      '/api/assignments',
+      '/api/inventory'
+    ],
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Export for Vercel
 module.exports = (req, res) => {
+  console.log('📥 Request:', req.method, req.url);
   app(req, res);
 };
