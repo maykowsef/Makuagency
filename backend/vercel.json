@@ -2,18 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/supabase-api.js",
+      "src": "index.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/supabase-api.js"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/api/supabase-api.js"
+      "dest": "/index.js"
     }
   ],
   "env": {
