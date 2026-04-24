@@ -120,15 +120,28 @@ app.get('/api/selling-points', async (req, res) => {
     console.log('📥 GET /api/selling-points request');
     const { data, error } = await supabase
       .from('selling_points')
-      .select('*');
+      .select(`
+        *,
+        companies:company_id (
+          id,
+          name
+        )
+      `);
     
     if (error) {
       console.log('❌ Supabase GET error:', error);
       throw error;
     }
     
-    console.log('✅ Selling points retrieved:', data.length, 'items');
-    res.json(data || []);
+    // Transform data to include companyName for frontend compatibility
+    const transformedData = data.map(item => ({
+      ...item,
+      companyName: item.companies?.name || 'Unknown Company',
+      companyId: item.company_id
+    }));
+    
+    console.log('✅ Selling points retrieved:', transformedData.length, 'items');
+    res.json(transformedData || []);
   } catch (error) { 
     console.log('❌ API GET error:', error);
     handleError(res, error); 
@@ -148,15 +161,28 @@ app.post('/api/selling-points', async (req, res) => {
     const { data, error } = await supabase
       .from('selling_points')
       .insert([sellingPointData])
-      .select();
+      .select(`
+        *,
+        companies:company_id (
+          id,
+          name
+        )
+      `);
     
     if (error) {
       console.log('❌ Supabase POST error:', error);
       throw error;
     }
     
-    console.log('✅ Selling point created:', data[0]);
-    res.json(data[0]);
+    // Transform data to include companyName for frontend compatibility
+    const transformedData = data.map(item => ({
+      ...item,
+      companyName: item.companies?.name || 'Unknown Company',
+      companyId: item.company_id
+    }));
+    
+    console.log('✅ Selling point created:', transformedData[0]);
+    res.json(transformedData[0]);
   } catch (error) { 
     console.log('❌ API POST error:', error);
     handleError(res, error); 
