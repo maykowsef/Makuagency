@@ -2,11 +2,11 @@ import { api } from '../config/api';
 
 export const testBackendConnection = async () => {
   console.log('🧪 Testing backend connection...');
-  console.log('API Base URL:', process.env.REACT_APP_API_URL || 'https://makuagencybackend.vercel.app/api');
+  console.log('API Base URL:', process.env.REACT_APP_API_URL || 'https://makuagencybackendproject.vercel.app/api');
   
   try {
     // Test basic API call
-    const response = await fetch('https://makuagencybackend.vercel.app/api/test');
+    const response = await fetch('https://makuagencybackendproject.vercel.app/api/test');
     const result = await response.json();
     
     console.log('✅ Backend test result:', result);

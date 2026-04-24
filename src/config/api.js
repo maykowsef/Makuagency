@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://makuagencybackend.vercel.app/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://makuagencybackendproject.vercel.app/api';
 
 console.log('🔗 API Base URL:', API_BASE_URL);
 

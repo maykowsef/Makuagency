@@ -11,6 +11,11 @@ SUPABASE_ANON_KEY=sb_publishable_jBwIe7SlVBjnnb0RoKrs3w_YcwjzFWD
 SUPABASE_URL=https://snswadioooqitikqmxjl.supabase.co
 ```
 
+**Frontend Environment Variable:**
+```
+REACT_APP_API_URL=https://makuagencybackendproject.vercel.app/api
+```
+
 ## Deployment Steps
 
 1. Push this backend to GitHub
