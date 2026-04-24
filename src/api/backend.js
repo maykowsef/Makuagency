@@ -1,7 +1,7 @@
 // NEW API FILE v5.0 - COMPLETELY BYPASSES CACHE
 // This file replaces src/config/api.js to force fresh build
 
-const BACKEND_URL = 'https://makuagencybackendproject.vercel.app/api';
+const BACKEND_URL = 'https://makubackend.vercel.app/api';
 
 console.log('🚀🚀🚀🚀 NEW API FILE v5.0 LOADED');
 console.log('🚀🚀🚀🚀 BACKEND URL:', BACKEND_URL);

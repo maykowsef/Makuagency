@@ -572,7 +572,7 @@ const App = () => {
     pauseTimer(); // Stop counting, but save progress for restart today
   };
 
-  const API_BASE_URL = 'https://makuagencybackendproject.vercel.app';
+  const API_BASE_URL = 'https://makubackend.vercel.app';
 
   // ─── API FETCHING ──────────────────────────────────────────────────
   useEffect(() => {
