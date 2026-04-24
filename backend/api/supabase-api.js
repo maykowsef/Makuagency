@@ -187,6 +187,35 @@ app.get('/test', async (req, res) => {
   });
 });
 
+// Activities endpoint (mock for now)
+app.get('/activities', async (req, res) => {
+  res.json([]);
+});
+
+app.post('/activities', async (req, res) => {
+  res.json({ success: true });
+});
+
+// Minisites endpoint (mock for now)
+app.get('/minisites', async (req, res) => {
+  res.json([]);
+});
+
+// Schedules endpoint (mock for now)
+app.get('/schedules', async (req, res) => {
+  res.json([]);
+});
+
+// Assignments endpoint (mock for now)
+app.get('/assignments', async (req, res) => {
+  res.json([]);
+});
+
+// Inventory endpoint (mock for now)
+app.get('/inventory', async (req, res) => {
+  res.json([]);
+});
+
 // Export for Vercel
 module.exports = (req, res) => {
   app(req, res);

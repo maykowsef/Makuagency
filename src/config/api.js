@@ -1,9 +1,21 @@
 // API Configuration
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://your-backend-url.vercel.app/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://makuagencybackend.vercel.app/api';
 
 export const api = {
   // Companies
-  getCompanies: () => fetch(`${API_BASE_URL}/companies`).then(res => res.json()),
+  getCompanies: async () => {
+    try {
+      console.log('Fetching companies from:', `${API_BASE_URL}/companies`);
+      const response = await fetch(`${API_BASE_URL}/companies`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('API Error (getCompanies):', error);
+      throw error;
+    }
+  },
   createCompany: (data) => fetch(`${API_BASE_URL}/companies`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
