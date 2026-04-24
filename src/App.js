@@ -572,7 +572,7 @@ const App = () => {
     pauseTimer(); // Stop counting, but save progress for restart today
   };
 
-  const API_BASE_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000';
+  const API_BASE_URL = 'https://makuagencybackendproject.vercel.app';
 
   // ─── API FETCHING ──────────────────────────────────────────────────
   useEffect(() => {
