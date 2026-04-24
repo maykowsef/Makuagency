@@ -1,6 +1,8 @@
-// API Configuration v2.1.0
+// API Configuration v2.2.0 - FORCED URL OVERRIDE
 const API_BASE_URL = 'https://makuagencybackendproject.vercel.app/api';
-console.log('🔗 API Base URL (Updated v2.1.0):', API_BASE_URL, new Date().toISOString());
+// Force override any environment variables
+process.env.REACT_APP_API_URL = API_BASE_URL;
+console.log('🔗 API Base URL (FORCED v2.2.0):', API_BASE_URL, new Date().toISOString());
 
 console.log('🔗 API Base URL:', API_BASE_URL);
 
