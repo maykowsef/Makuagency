@@ -595,22 +595,26 @@ const App = () => {
           }))
         );
 
-        results.forEach((result, index) => {
-          const key = endpoints[index].key;
-          if (result.status === 'fulfilled') {
-            const data = result.value;
-            if (Array.isArray(data)) {
-              if (key === 'sellingPoints') setSellingPoints(data);
-              else if (key === 'companies') setCompanies(data);
-              else if (key === 'contacts') setContacts(data);
-              else if (key === 'minisites') setMinisites(data);
-              else if (key === 'schedules') setSchedules(data);
-              else if (key === 'assignments') setContactAssignments(data);
-              else if (key === 'inventory') setInventory(data);
+      results.forEach((result, index) => {
+        const key = endpoints[index].key;
+        if (result.status === 'fulfilled') {
+          const data = result.value;
+          console.log(`🔍 Fetched ${key}:`, data.length || 'N/A', 'items');
+          if (Array.isArray(data)) {
+            if (key === 'sellingPoints') {
+              console.log('🔍 Selling points data:', data);
+              setSellingPoints(data);
             }
-          } else {
-            console.error(`Error fetching ${key}:`, result.reason);
+            else if (key === 'companies') setCompanies(data);
+            else if (key === 'contacts') setContacts(data);
+            else if (key === 'minisites') setMinisites(data);
+            else if (key === 'schedules') setSchedules(data);
+            else if (key === 'assignments') setContactAssignments(data);
+            else if (key === 'inventory') setInventory(data);
           }
+        } else {
+          console.error(`Error fetching ${key}:`, result.reason);
+        }
         });
       } catch (error) {
         console.error('Error in fetchData:', error);
@@ -1332,16 +1336,32 @@ const App = () => {
   // Selling Points CRUD
   const handleAddSellingPoint = async (newData) => {
     try {
+      console.log('🔍 Creating selling point with data:', newData);
       const response = await fetch(`${API_BASE_URL}/api/selling-points`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newData)
       });
       const newPoint = await response.json();
-      setSellingPoints(prev => [newPoint, ...prev]);
+      console.log('🔍 New selling point created:', newPoint);
+      console.log('🔍 New selling point ID:', newPoint.id);
+      console.log('🔍 New selling point name:', newPoint.name);
+      
+      setSellingPoints(prev => {
+        console.log('🔍 Previous selling points count:', prev.length);
+        const updated = [newPoint, ...prev];
+        console.log('🔍 Updated selling points count:', updated.length);
+        console.log('🔍 First selling point in updated list:', updated[0]);
+        return updated;
+      });
 
       logActivity('selling_point', `Created selling point: ${newPoint.name}`, { action: 'create', replayable: false });
-      navigateTo('selling-point-detail', { id: newPoint.id });
+      
+      // Add a small delay to ensure state is updated before navigation
+      setTimeout(() => {
+        console.log('🔍 Navigating to selling point detail with ID:', newPoint.id);
+        navigateTo('selling-point-detail', { id: newPoint.id });
+      }, 100);
     } catch (error) {
       console.error('Error adding selling point:', error);
     }
@@ -1544,7 +1564,14 @@ const App = () => {
           onAddContact={handleQuickAddContact}
         />;
       case 'selling-point-detail':
+        console.log('🔍 Looking for selling point detail with ID:', viewParams.id);
+        console.log('🔍 Available selling points:', sellingPoints.map(sp => ({ id: sp.id, name: sp.name })));
         const spDetail = viewParams.id ? sellingPoints.find(sp => String(sp.id) === String(viewParams.id)) : null;
+        console.log('🔍 Found selling point detail:', spDetail);
+        if (!spDetail) {
+          console.error('❌ Selling point not found in local state, ID:', viewParams.id);
+          console.error('❌ Available IDs:', sellingPoints.map(sp => sp.id));
+        }
         return <SellingPointDetail
           onBack={() => {
             if (viewParams.returnTo) navigateTo(viewParams.returnTo, { id: viewParams.returnId });
