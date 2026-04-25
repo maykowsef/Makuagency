@@ -57,6 +57,21 @@ CREATE TABLE IF NOT EXISTS selling_points (
   last_modified TIMESTAMP DEFAULT NOW()
 );
 
+-- Create Minisites table
+CREATE TABLE IF NOT EXISTS minisites (
+  id SERIAL PRIMARY KEY,
+  selling_point_id INTEGER REFERENCES selling_points(id),
+  title TEXT NOT NULL,
+  slug TEXT UNIQUE,
+  content TEXT,
+  status TEXT DEFAULT 'draft',
+  template TEXT DEFAULT 'default',
+  metadata JSONB DEFAULT '{}',
+  published_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW(),
+  last_modified TIMESTAMP DEFAULT NOW()
+);
+
 -- Create Activities table (for logging)
 CREATE TABLE IF NOT EXISTS activities (
   id SERIAL PRIMARY KEY,
@@ -81,6 +96,7 @@ CREATE TABLE IF NOT EXISTS assignments (
 ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
 ALTER TABLE contacts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE selling_points ENABLE ROW LEVEL SECURITY;
+ALTER TABLE minisites ENABLE ROW LEVEL SECURITY;
 ALTER TABLE activities ENABLE ROW LEVEL SECURITY;
 ALTER TABLE assignments ENABLE ROW LEVEL SECURITY;
 
@@ -99,6 +115,11 @@ CREATE POLICY "Enable insert for all" ON selling_points FOR INSERT WITH CHECK (t
 CREATE POLICY "Enable select for all" ON selling_points FOR SELECT USING (true);
 CREATE POLICY "Enable update for all" ON selling_points FOR UPDATE USING (true);
 CREATE POLICY "Enable delete for all" ON selling_points FOR DELETE USING (true);
+
+CREATE POLICY "Enable insert for all" ON minisites FOR INSERT WITH CHECK (true);
+CREATE POLICY "Enable select for all" ON minisites FOR SELECT USING (true);
+CREATE POLICY "Enable update for all" ON minisites FOR UPDATE USING (true);
+CREATE POLICY "Enable delete for all" ON minisites FOR DELETE USING (true);
 
 CREATE POLICY "Enable insert for all" ON activities FOR INSERT WITH CHECK (true);
 CREATE POLICY "Enable select for all" ON activities FOR SELECT USING (true);

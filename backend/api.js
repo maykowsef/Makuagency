@@ -28,8 +28,13 @@ app.get('/', async (req, res) => {
       '/api/companies',
       '/api/contacts', 
       '/api/selling-points',
+      '/api/selling-points/:id (PUT/DELETE)',
       '/api/activities',
       '/api/minisites',
+      '/api/minisites/:id (PUT/DELETE)',
+      '/api/minisites/:id/publish',
+      '/api/minisites/:id/inspect',
+      '/api/public/minisites/:slug',
       '/api/schedules',
       '/api/assignments',
       '/api/inventory'
@@ -189,17 +194,473 @@ app.post('/api/selling-points', async (req, res) => {
   }
 });
 
-// Mock endpoints for other entities
+// Selling Points PUT endpoint (Update)
+app.put('/api/selling-points/:id', async (req, res) => {
+  try {
+    console.log('📝 PUT /api/selling-points/:id request:', req.params.id, req.body);
+    
+    const { id } = req.params;
+    const updateData = {
+      ...req.body,
+      last_modified: new Date().toISOString()
+    };
+    
+    const { data, error } = await supabase
+      .from('selling_points')
+      .update(updateData)
+      .eq('id', id)
+      .select(`
+        *,
+        companies:company_id (
+          id,
+          name
+        )
+      `);
+    
+    if (error) {
+      console.log('❌ Supabase PUT error:', error);
+      throw error;
+    }
+    
+    if (!data || data.length === 0) {
+      return res.status(404).json({ error: 'Selling point not found' });
+    }
+    
+    // Transform data to include companyName for frontend compatibility
+    const transformedData = data.map(item => ({
+      ...item,
+      companyName: item.companies?.name || 'Unknown Company',
+      companyId: item.company_id
+    }));
+    
+    console.log('✅ Selling point updated:', transformedData[0]);
+    res.json(transformedData[0]);
+  } catch (error) { 
+    console.log('❌ API PUT error:', error);
+    handleError(res, error); 
+  }
+});
+
+// Selling Points DELETE endpoint
+app.delete('/api/selling-points/:id', async (req, res) => {
+  try {
+    console.log('🗑️ DELETE /api/selling-points/:id request:', req.params.id);
+    
+    const { id } = req.params;
+    
+    const { data, error } = await supabase
+      .from('selling_points')
+      .delete()
+      .eq('id', id)
+      .select();
+    
+    if (error) {
+      console.log('❌ Supabase DELETE error:', error);
+      throw error;
+    }
+    
+    if (!data || data.length === 0) {
+      return res.status(404).json({ error: 'Selling point not found' });
+    }
+    
+    console.log('✅ Selling point deleted:', id);
+    res.json({ success: true, deletedId: id });
+  } catch (error) { 
+    console.log('❌ API DELETE error:', error);
+    handleError(res, error); 
+  }
+});
+
+// Activities endpoints
 app.get('/api/activities', async (req, res) => {
-  res.json([]);
+  try {
+    console.log('📥 GET /api/activities request');
+    const { data, error } = await supabase
+      .from('activities')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.log('❌ Supabase GET error:', error);
+      throw error;
+    }
+    
+    console.log('✅ Activities retrieved:', data.length, 'items');
+    res.json(data || []);
+  } catch (error) { 
+    console.log('❌ API GET error:', error);
+    handleError(res, error); 
+  }
 });
 
 app.post('/api/activities', async (req, res) => {
-  res.json({ success: true });
+  try {
+    console.log('📤 POST /api/activities request:', req.body);
+    
+    const activityData = {
+      ...req.body,
+      created_at: new Date().toISOString()
+    };
+    
+    const { data, error } = await supabase
+      .from('activities')
+      .insert([activityData])
+      .select();
+    
+    if (error) {
+      console.log('❌ Supabase POST error:', error);
+      throw error;
+    }
+    
+    console.log('✅ Activity created:', data[0]);
+    res.json(data[0]);
+  } catch (error) { 
+    console.log('❌ API POST error:', error);
+    handleError(res, error); 
+  }
 });
 
+// Minisites endpoints - Complete implementation
 app.get('/api/minisites', async (req, res) => {
-  res.json([]);
+  try {
+    console.log('📥 GET /api/minisites request');
+    const { data, error } = await supabase
+      .from('minisites')
+      .select(`
+        *,
+        selling_points:selling_point_id (
+          id,
+          name,
+          companies:company_id (
+            id,
+            name
+          )
+        )
+      `)
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.log('❌ Supabase GET error:', error);
+      throw error;
+    }
+    
+    // Transform data for frontend compatibility
+    const transformedData = data.map(item => ({
+      ...item,
+      sellingPointName: item.selling_points?.name || 'Unknown Selling Point',
+      companyName: item.selling_points?.companies?.name || 'Unknown Company'
+    }));
+    
+    console.log('✅ Minisites retrieved:', transformedData.length, 'items');
+    res.json(transformedData || []);
+  } catch (error) { 
+    console.log('❌ API GET error:', error);
+    handleError(res, error); 
+  }
+});
+
+app.post('/api/minisites', async (req, res) => {
+  try {
+    console.log('📤 POST /api/minisites request:', req.body);
+    
+    const minisiteData = {
+      ...req.body,
+      created_at: new Date().toISOString(),
+      last_modified: new Date().toISOString()
+    };
+    
+    const { data, error } = await supabase
+      .from('minisites')
+      .insert([minisiteData])
+      .select(`
+        *,
+        selling_points:selling_point_id (
+          id,
+          name,
+          companies:company_id (
+            id,
+            name
+          )
+        )
+      `);
+    
+    if (error) {
+      console.log('❌ Supabase POST error:', error);
+      throw error;
+    }
+    
+    // Transform data for frontend compatibility
+    const transformedData = data.map(item => ({
+      ...item,
+      sellingPointName: item.selling_points?.name || 'Unknown Selling Point',
+      companyName: item.selling_points?.companies?.name || 'Unknown Company'
+    }));
+    
+    console.log('✅ Minisite created:', transformedData[0]);
+    res.json(transformedData[0]);
+  } catch (error) { 
+    console.log('❌ API POST error:', error);
+    handleError(res, error); 
+  }
+});
+
+app.put('/api/minisites/:id', async (req, res) => {
+  try {
+    console.log('📝 PUT /api/minisites/:id request:', req.params.id, req.body);
+    
+    const { id } = req.params;
+    const updateData = {
+      ...req.body,
+      last_modified: new Date().toISOString()
+    };
+    
+    const { data, error } = await supabase
+      .from('minisites')
+      .update(updateData)
+      .eq('id', id)
+      .select(`
+        *,
+        selling_points:selling_point_id (
+          id,
+          name,
+          companies:company_id (
+            id,
+            name
+          )
+        )
+      `);
+    
+    if (error) {
+      console.log('❌ Supabase PUT error:', error);
+      throw error;
+    }
+    
+    if (!data || data.length === 0) {
+      return res.status(404).json({ error: 'Minisite not found' });
+    }
+    
+    // Transform data for frontend compatibility
+    const transformedData = data.map(item => ({
+      ...item,
+      sellingPointName: item.selling_points?.name || 'Unknown Selling Point',
+      companyName: item.selling_points?.companies?.name || 'Unknown Company'
+    }));
+    
+    console.log('✅ Minisite updated:', transformedData[0]);
+    res.json(transformedData[0]);
+  } catch (error) { 
+    console.log('❌ API PUT error:', error);
+    handleError(res, error); 
+  }
+});
+
+app.delete('/api/minisites/:id', async (req, res) => {
+  try {
+    console.log('🗑️ DELETE /api/minisites/:id request:', req.params.id);
+    
+    const { id } = req.params;
+    
+    const { data, error } = await supabase
+      .from('minisites')
+      .delete()
+      .eq('id', id)
+      .select();
+    
+    if (error) {
+      console.log('❌ Supabase DELETE error:', error);
+      throw error;
+    }
+    
+    if (!data || data.length === 0) {
+      return res.status(404).json({ error: 'Minisite not found' });
+    }
+    
+    console.log('✅ Minisite deleted:', id);
+    res.json({ success: true, deletedId: id });
+  } catch (error) { 
+    console.log('❌ API DELETE error:', error);
+    handleError(res, error); 
+  }
+});
+
+// Minisite publish endpoint
+app.post('/api/minisites/:id/publish', async (req, res) => {
+  try {
+    console.log('🚀 POST /api/minisites/:id/publish request:', req.params.id);
+    
+    const { id } = req.params;
+    
+    // Update minisite status to published
+    const { data, error } = await supabase
+      .from('minisites')
+      .update({ 
+        status: 'published',
+        published_at: new Date().toISOString(),
+        last_modified: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select(`
+        *,
+        selling_points:selling_point_id (
+          id,
+          name,
+          companies:company_id (
+            id,
+            name
+          )
+        )
+      `);
+    
+    if (error) {
+      console.log('❌ Supabase PUBLISH error:', error);
+      throw error;
+    }
+    
+    if (!data || data.length === 0) {
+      return res.status(404).json({ error: 'Minisite not found' });
+    }
+    
+    // Transform data for frontend compatibility
+    const transformedData = data.map(item => ({
+      ...item,
+      sellingPointName: item.selling_points?.name || 'Unknown Selling Point',
+      companyName: item.selling_points?.companies?.name || 'Unknown Company'
+    }));
+    
+    console.log('✅ Minisite published:', transformedData[0]);
+    res.json(transformedData[0]);
+  } catch (error) { 
+    console.log('❌ API PUBLISH error:', error);
+    handleError(res, error); 
+  }
+});
+
+// Minisite inspection endpoint - Get published minisite for viewing
+app.get('/api/minisites/:id/inspect', async (req, res) => {
+  try {
+    console.log('🔍 GET /api/minisites/:id/inspect request:', req.params.id);
+    
+    const { id } = req.params;
+    
+    const { data, error } = await supabase
+      .from('minisites')
+      .select(`
+        *,
+        selling_points:selling_point_id (
+          id,
+          name,
+          business_type,
+          industry,
+          address,
+          city,
+          country,
+          postal_code,
+          phones,
+          email,
+          description,
+          companies:company_id (
+            id,
+            name,
+            website,
+            phone,
+            email
+          )
+        )
+      `)
+      .eq('id', id)
+      .eq('status', 'published')
+      .single();
+    
+    if (error) {
+      console.log('❌ Supabase INSPECT error:', error);
+      throw error;
+    }
+    
+    if (!data) {
+      return res.status(404).json({ error: 'Published minisite not found' });
+    }
+    
+    // Transform data for frontend compatibility
+    const transformedData = {
+      ...data,
+      sellingPointName: data.selling_points?.name || 'Unknown Selling Point',
+      companyName: data.selling_points?.companies?.name || 'Unknown Company',
+      companyWebsite: data.selling_points?.companies?.website || '',
+      companyPhone: data.selling_points?.companies?.phone || '',
+      companyEmail: data.selling_points?.companies?.email || ''
+    };
+    
+    console.log('✅ Minisite inspection data:', transformedData);
+    res.json(transformedData);
+  } catch (error) { 
+    console.log('❌ API INSPECT error:', error);
+    handleError(res, error); 
+  }
+});
+
+// Public minisite view endpoint (for external viewing)
+app.get('/api/public/minisites/:slug', async (req, res) => {
+  try {
+    console.log('🌐 GET /api/public/minisites/:slug request:', req.params.slug);
+    
+    const { slug } = req.params;
+    
+    const { data, error } = await supabase
+      .from('minisites')
+      .select(`
+        *,
+        selling_points:selling_point_id (
+          id,
+          name,
+          business_type,
+          industry,
+          address,
+          city,
+          country,
+          postal_code,
+          phones,
+          email,
+          description,
+          companies:company_id (
+            id,
+            name,
+            website,
+            phone,
+            email,
+            description
+          )
+        )
+      `)
+      .eq('slug', slug)
+      .eq('status', 'published')
+      .single();
+    
+    if (error) {
+      console.log('❌ Supabase PUBLIC VIEW error:', error);
+      throw error;
+    }
+    
+    if (!data) {
+      return res.status(404).json({ error: 'Published minisite not found' });
+    }
+    
+    // Transform data for public viewing
+    const transformedData = {
+      ...data,
+      sellingPointName: data.selling_points?.name || 'Unknown Selling Point',
+      companyName: data.selling_points?.companies?.name || 'Unknown Company',
+      companyWebsite: data.selling_points?.companies?.website || '',
+      companyPhone: data.selling_points?.companies?.phone || '',
+      companyEmail: data.selling_points?.companies?.email || '',
+      companyDescription: data.selling_points?.companies?.description || ''
+    };
+    
+    console.log('✅ Public minisite view:', transformedData);
+    res.json(transformedData);
+  } catch (error) { 
+    console.log('❌ API PUBLIC VIEW error:', error);
+    handleError(res, error); 
+  }
 });
 
 app.get('/api/schedules', async (req, res) => {
