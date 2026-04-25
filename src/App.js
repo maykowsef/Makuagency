@@ -19,7 +19,8 @@ import UserManagement from './components/admin/UserManagement';
 import React, { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import SellingPoints from './components/selling-points/SellingPoints';
-import SellingPointDetail from './components/selling-points/SellingPointDetail';
+import SellingPointDetail from './components/selling-points/detail/index';
+import SellingPointDetailDirect from './components/selling-points/SellingPointDetailDirect';
 import SellingPointForm from './components/selling-points/SellingPointForm';
 import { initialSellingPoints } from './data/initialSellingPoints';
 import { initialCompanies } from './data/initialCompanies';
@@ -1570,51 +1571,30 @@ const App = () => {
           onAddContact={handleQuickAddContact}
         />;
       case 'selling-point-detail':
-        console.log('🔍 Looking for selling point detail with ID:', viewParams.id);
-        console.log('🔍 Available selling points:', sellingPoints.map(sp => ({ id: sp.id, name: sp.name, idType: typeof sp.id })));
-        const spDetail = viewParams.id ? sellingPoints.find(sp => {
-          const spId = sp.id;
-          const viewId = viewParams.id;
-          console.log('🔍 Comparing IDs:', { spId, viewId, spIdType: typeof spId, viewIdType: typeof viewId, match: spId == viewId, strictMatch: spId === viewId });
-          return spId == viewId; // Use loose equality for different types
-        }) : null;
-        console.log('🔍 Found selling point detail:', spDetail);
-        if (!spDetail) {
-          console.error('❌ Selling point not found in local state, ID:', viewParams.id);
-          console.error('❌ Available IDs:', sellingPoints.map(sp => sp.id));
-        }
-        return <SellingPointDetail
+        console.log('🔍 Using direct fetch for selling point detail with ID:', viewParams.id);
+        return <SellingPointDetailDirect
+          sellingPointId={viewParams.id}
           onBack={() => {
             if (viewParams.returnTo) navigateTo(viewParams.returnTo, { id: viewParams.returnId });
             else navigateTo('selling-points');
           }}
-          sellingPoint={spDetail}
           onUpdate={handleUpdateSellingPoint}
           onNavigate={navigateTo}
           onDelete={handleDeleteSellingPoint}
           onCheck={handleCheckSellingPoint}
-          onFlagFaulty={(id, note) => {
-            const sp = sellingPoints.find(p => String(p.id) === String(id));
-            if (sp) {
-              handleUpdateSellingPoint({ ...sp, status: 'Faulty', faultNote: note });
-            }
-          }}
+          onPublish={handlePublishMinisite}
+          onSchedule={handleScheduleMinisite}
           minisites={minisites}
-          customTemplates={customTemplates}
+          customTemplates={[]}
           onAddMinisite={handleAddMinisite}
-          onDeleteMinisite={handleDeleteMinisite}
+          onDeleteMinisite={onDeleteMinisite}
           companies={companies}
           contacts={contacts}
-          inventory={inventory}
-          onAddInventory={handleAddInventory}
-          onUpdateInventory={handleUpdateInventory}
-          onDeleteInventory={handleDeleteInventory}
-          contactAssignments={contactAssignments}
+          onAddContact={handleQuickAddContact}
+          onEditContact={handleUpdateContact}
+          onDeleteContact={handleDeleteContact}
+          activities={activities}
           schedules={schedules}
-          userData={userData}
-          onAddSchedule={handleAddSchedule}
-          onUpdateAssignments={handleUpdateContactAssignments}
-          viewParams={viewParams}
         />;
       case 'my-work':
         return <WorkSection

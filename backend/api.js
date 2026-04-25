@@ -28,7 +28,7 @@ app.get('/', async (req, res) => {
       '/api/companies',
       '/api/contacts', 
       '/api/selling-points',
-      '/api/selling-points/:id (PUT/DELETE)',
+      '/api/selling-points/:id (GET/PUT/DELETE)',
       '/api/activities',
       '/api/minisites',
       '/api/minisites/:id (PUT/DELETE)',
@@ -190,6 +190,49 @@ app.post('/api/selling-points', async (req, res) => {
     res.json(transformedData[0]);
   } catch (error) { 
     console.log('❌ API POST error:', error);
+    handleError(res, error); 
+  }
+});
+
+// Selling Points GET by ID endpoint
+app.get('/api/selling-points/:id', async (req, res) => {
+  try {
+    console.log('📥 GET /api/selling-points/:id request:', req.params.id);
+    
+    const { id } = req.params;
+    
+    const { data, error } = await supabase
+      .from('selling_points')
+      .select(`
+        *,
+        companies:company_id (
+          id,
+          name
+        )
+      `)
+      .eq('id', id)
+      .single();
+    
+    if (error) {
+      console.log('❌ Supabase GET by ID error:', error);
+      throw error;
+    }
+    
+    if (!data) {
+      return res.status(404).json({ error: 'Selling point not found' });
+    }
+    
+    // Transform data to include companyName for frontend compatibility
+    const transformedData = {
+      ...data,
+      companyName: data.companies?.name || 'Unknown Company',
+      companyId: data.company_id
+    };
+    
+    console.log('✅ Selling point retrieved by ID:', transformedData);
+    res.json(transformedData);
+  } catch (error) { 
+    console.log('❌ API GET by ID error:', error);
     handleError(res, error); 
   }
 });
