@@ -1344,8 +1344,14 @@ const App = () => {
       });
       const newPoint = await response.json();
       console.log('🔍 New selling point created:', newPoint);
-      console.log('🔍 New selling point ID:', newPoint.id);
+      console.log('🔍 New selling point ID:', newPoint.id, 'type:', typeof newPoint.id);
       console.log('🔍 New selling point name:', newPoint.name);
+      
+      // Ensure the new point has a valid ID before adding to state
+      if (!newPoint || !newPoint.id) {
+        console.error('❌ Invalid selling point response:', newPoint);
+        return;
+      }
       
       setSellingPoints(prev => {
         console.log('🔍 Previous selling points count:', prev.length);
@@ -1357,11 +1363,11 @@ const App = () => {
 
       logActivity('selling_point', `Created selling point: ${newPoint.name}`, { action: 'create', replayable: false });
       
-      // Add a small delay to ensure state is updated before navigation
+      // Ensure state is updated before navigation
       setTimeout(() => {
         console.log('🔍 Navigating to selling point detail with ID:', newPoint.id);
-        navigateTo('selling-point-detail', { id: newPoint.id });
-      }, 100);
+        navigateTo('selling-point-detail', { id: String(newPoint.id) }); // Ensure ID is string
+      }, 200); // Increased delay for state update
     } catch (error) {
       console.error('Error adding selling point:', error);
     }
@@ -1565,8 +1571,13 @@ const App = () => {
         />;
       case 'selling-point-detail':
         console.log('🔍 Looking for selling point detail with ID:', viewParams.id);
-        console.log('🔍 Available selling points:', sellingPoints.map(sp => ({ id: sp.id, name: sp.name })));
-        const spDetail = viewParams.id ? sellingPoints.find(sp => String(sp.id) === String(viewParams.id)) : null;
+        console.log('🔍 Available selling points:', sellingPoints.map(sp => ({ id: sp.id, name: sp.name, idType: typeof sp.id })));
+        const spDetail = viewParams.id ? sellingPoints.find(sp => {
+          const spId = sp.id;
+          const viewId = viewParams.id;
+          console.log('🔍 Comparing IDs:', { spId, viewId, spIdType: typeof spId, viewIdType: typeof viewId, match: spId == viewId, strictMatch: spId === viewId });
+          return spId == viewId; // Use loose equality for different types
+        }) : null;
         console.log('🔍 Found selling point detail:', spDetail);
         if (!spDetail) {
           console.error('❌ Selling point not found in local state, ID:', viewParams.id);
