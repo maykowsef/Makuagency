@@ -1149,6 +1149,35 @@ const App = () => {
     }
   };
 
+  const handlePublishMinisite = async (minisiteId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/minisites/${minisiteId}/publish`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const updatedMinisite = await response.json();
+      setMinisites(prev => prev.map(m => m.id === minisiteId ? updatedMinisite : m));
+      logActivity('Publish', `Published minisite`, { replayable: false });
+    } catch (error) {
+      console.error('Error publishing minisite:', error);
+    }
+  };
+
+  const handleScheduleMinisite = async (minisiteId, scheduleData) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/minisites/${minisiteId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...scheduleData, status: 'scheduled' })
+      });
+      const updatedMinisite = await response.json();
+      setMinisites(prev => prev.map(m => m.id === minisiteId ? updatedMinisite : m));
+      logActivity('Schedule', `Scheduled minisite`, { replayable: false });
+    } catch (error) {
+      console.error('Error scheduling minisite:', error);
+    }
+  };
+
   const handleSaveTemplate = (template) => {
     const exists = customTemplates.find(t => String(t.id) === String(template.id));
     if (exists) {
