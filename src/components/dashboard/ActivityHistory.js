@@ -41,7 +41,22 @@ const ActivityHistory = ({ activityLog = [], onReplay }) => {
     };
 
     const filterByDate = (activity) => {
-        const activityDate = new Date(activity.timestamp);
+        // Add date validation to prevent Invalid time value errors
+        if (!activity.timestamp) return false;
+        
+        let activityDate;
+        try {
+            activityDate = new Date(activity.timestamp);
+            // Check if date is valid
+            if (isNaN(activityDate.getTime())) {
+                console.warn('Invalid date detected:', activity.timestamp);
+                return false;
+            }
+        } catch (error) {
+            console.warn('Date parsing error:', error, activity.timestamp);
+            return false;
+        }
+        
         const activityDateStr = activity.timestamp.split('T')[0];
 
         // Custom Date Picker Priority
@@ -71,7 +86,24 @@ const ActivityHistory = ({ activityLog = [], onReplay }) => {
     const filteredActivities = activityLog
         .filter(activity => filterType === 'All' || activity.type === filterType)
         .filter(filterByDate)
-        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        .sort((a, b) => {
+            // Add date validation to sorting to prevent Invalid time value errors
+            try {
+                const dateA = a.timestamp ? new Date(a.timestamp) : new Date(0);
+                const dateB = b.timestamp ? new Date(b.timestamp) : new Date(0);
+                
+                // Check if dates are valid
+                if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) {
+                    console.warn('Invalid date in sorting:', { a: a.timestamp, b: b.timestamp });
+                    return 0;
+                }
+                
+                return dateB - dateA;
+            } catch (error) {
+                console.warn('Date sorting error:', error);
+                return 0;
+            }
+        });
 
     // Pagination Logic
     const totalPages = Math.ceil(filteredActivities.length / itemsPerPage);
@@ -81,19 +113,50 @@ const ActivityHistory = ({ activityLog = [], onReplay }) => {
     );
 
     const formatTimestamp = (timestamp) => {
-        const date = new Date(timestamp);
+        // Add date validation to prevent Invalid time value errors
+        if (!timestamp) return 'Invalid Date';
+        
+        let date;
+        try {
+            date = new Date(timestamp);
+            // Check if date is valid
+            if (isNaN(date.getTime())) {
+                console.warn('Invalid date in formatTimestamp:', timestamp);
+                return 'Invalid Date';
+            }
+        } catch (error) {
+            console.warn('Date formatting error:', error, timestamp);
+            return 'Invalid Date';
+        }
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
     const groupByDate = (activities) => {
         const groups = {};
         activities.forEach(activity => {
-            const date = new Date(activity.timestamp).toLocaleDateString(undefined, {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
+            // Add date validation to prevent Invalid time value errors
+            let dateStr;
+            try {
+                if (!activity.timestamp) {
+                    dateStr = 'Invalid Date';
+                } else {
+                    const date = new Date(activity.timestamp);
+                    if (isNaN(date.getTime())) {
+                        console.warn('Invalid date in groupByDate:', activity.timestamp);
+                        dateStr = 'Invalid Date';
+                    } else {
+                        dateStr = date.toLocaleDateString(undefined, {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        });
+                    }
+                }
+            } catch (error) {
+                console.warn('Date grouping error:', error, activity.timestamp);
+                dateStr = 'Invalid Date';
+            }
             if (!groups[date]) groups[date] = [];
             groups[date].push(activity);
         });
