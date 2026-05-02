@@ -213,8 +213,8 @@ app.post('/api/selling-points', async (req, res) => {
       `);
     
     // If error due to missing columns, try with basic data only
-    if (error && error.message && error.message.includes('column') && error.message.includes('does not exist')) {
-      console.log('⚠️ Column missing, trying with basic data only...');
+    if (error && (error.message && (error.message.includes('column') && error.message.includes('does not exist') || error.message.includes('schema cache')))) {
+      console.log('⚠️ Column missing or schema cache issue, trying with basic data only...');
       console.log('❌ Error details:', error);
       
       const basicSellingPointData = {
@@ -250,6 +250,34 @@ app.post('/api/selling-points', async (req, res) => {
       
       data = result.data;
       error = result.error;
+      
+      // If still failing, try with minimal data
+      if (error && (error.message && (error.message.includes('column') && error.message.includes('does not exist') || error.message.includes('schema cache')))) {
+        console.log('⚠️ Still failing, trying with minimal data...');
+        
+        const minimalSellingPointData = {
+          name: req.body.name,
+          email: req.body.email,
+          created_at: req.body.created_at || new Date().toISOString(),
+          last_modified: new Date().toISOString()
+        };
+        
+        console.log('🔍 Minimal selling point data:', minimalSellingPointData);
+        
+        const minimalResult = await supabase
+          .from('selling_points')
+          .insert([minimalSellingPointData])
+          .select(`
+            *,
+            companies:company_id (
+              id,
+              name
+            )
+          `);
+        
+        data = minimalResult.data;
+        error = minimalResult.error;
+      }
     }
     
     if (error) {
