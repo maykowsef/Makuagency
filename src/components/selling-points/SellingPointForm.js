@@ -4,6 +4,7 @@ import {
     Search, X, Plus, Trash2, Edit, Image as ImageIcon, ExternalLink,
     Bot, Users, FileText, CheckCircle, ChevronDown, ChevronRight, Megaphone
 } from 'lucide-react';
+import { safeNow } from '../../utils/dateUtils';
 import {
     BUSINESS_TYPES, COUNTRIES, ANNOUNCEMENT_SITES, SOCIAL_PLATFORMS, FUEL_TYPES, VEHICLE_TYPES,
     INDUSTRY_MAP, INDUSTRY_ANNOUNCEMENT_SITES,
@@ -276,7 +277,7 @@ const SellingPointForm = ({
                     imageUrl: url,
                     version: 'Logo ' + (prev.logoHistory.length + 1),
                     isCurrent: prev.logoHistory.length === 0,
-                    uploadDate: new Date().toISOString(),
+                    uploadDate: safeNow(),
                     uploadedBy: { name: 'Me', avatar: '' },
                     status: 'Active'
                 }]
@@ -320,7 +321,7 @@ const SellingPointForm = ({
         if (text) {
             setFormData(prev => ({
                 ...prev,
-                notes: [...prev.notes, { id: Date.now(), text, date: new Date().toISOString(), author: { name: 'Me', avatar: '' } }]
+                notes: [...prev.notes, { id: Date.now(), text, date: safeNow(), author: { name: 'Me', avatar: '' } }]
             }));
         }
     };

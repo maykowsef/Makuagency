@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { ANNOUNCEMENT_SITES, ANNOUNCEMENT_TYPES, COUNTRIES, BUSINESS_TYPES } from '../../../data/constants';
+import { safeNow } from '../../../utils/dateUtils';
 
 // Sub-components
 import Header from './Header';
@@ -83,7 +84,7 @@ const SellingPointDetail = ({
         country: localSellingPoint.address?.country || localSellingPoint.country || '',
 
         phones: (localSellingPoint.phones || (Array.isArray(localSellingPoint.phone) ? localSellingPoint.phone : [
-            { id: 1, number: localSellingPoint.phone || 'No phone', type: 'Main', isPrimary: true, addedBy: { name: 'System' }, addedDate: new Date().toISOString() }
+            { id: 1, number: localSellingPoint.phone || 'No phone', type: 'Main', isPrimary: true, addedBy: { name: 'System' }, addedDate: safeNow() }
         ])).map(p => ({ ...p, modifiedBy: p.modifiedBy || [], checkedBy: p.checkedBy || [] })),
 
         emails: (localSellingPoint.emails || [
@@ -176,14 +177,14 @@ const SellingPointDetail = ({
     const addHistoryEntry = (action, field, details, changes = null) => {
         return {
             id: Date.now() + Math.random(),
-            date: new Date().toISOString(),
+            date: safeNow(),
             action, field, details, changes,
             performedBy: { name: 'Me', avatar: 'https://ui-avatars.com/api/?name=Me&background=000&color=fff' }
         };
     };
 
     const handleUpdateSP = (updatedSP) => {
-        updatedSP.lastModified = { name: 'Me', avatar: 'https://ui-avatars.com/api/?name=Me&background=000&color=fff', date: new Date().toISOString() };
+        updatedSP.lastModified = { name: 'Me', avatar: 'https://ui-avatars.com/api/?name=Me&background=000&color=fff', date: safeNow() };
         if (onUpdate) {
             onUpdate(updatedSP);
             setLocalSellingPoint(updatedSP);
@@ -340,7 +341,7 @@ const SellingPointDetail = ({
                     if (idx !== -1) items[idx] = { ...items[idx], ...data };
                     historyEntry = addHistoryEntry('Modified', editSection, `Updated ${editSection}`);
                 } else {
-                    const newItem = { ...data, id: Date.now(), addedDate: new Date().toISOString(), addedBy: { name: 'Me' } };
+                    const newItem = { ...data, id: Date.now(), addedDate: safeNow(), addedBy: { name: 'Me' } };
                     items.push(newItem);
                     historyEntry = addHistoryEntry('Created', editSection, `Added ${editSection}`);
                 }
@@ -423,7 +424,7 @@ const SellingPointDetail = ({
             phone: contact.phone,
             isPrimary: updatedSP.contacts.length === 0,
             createdBy: { name: 'Me', avatar: 'https://ui-avatars.com/api/?name=Me&background=000&color=fff' },
-            addedDate: new Date().toISOString()
+            addedDate: safeNow()
         });
 
         updatedSP.history.unshift(addHistoryEntry('Linked', 'Contact', `Linked contact: ${contact.name}`));
