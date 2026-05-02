@@ -168,8 +168,8 @@ app.post('/api/selling-points', async (req, res) => {
   try {
     console.log('📤 POST /api/selling-points request:', req.body);
     
-    // Map frontend field names to database column names
-    const sellingPointData = {
+    // First try with full data mapping
+    let sellingPointData = {
       name: req.body.name,
       company_id: req.body.companyId || req.body.company_id,
       business_type: req.body.businessType,
@@ -201,7 +201,7 @@ app.post('/api/selling-points', async (req, res) => {
     
     console.log('🔍 Mapped selling point data:', sellingPointData);
     
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('selling_points')
       .insert([sellingPointData])
       .select(`
@@ -211,6 +211,46 @@ app.post('/api/selling-points', async (req, res) => {
           name
         )
       `);
+    
+    // If error due to missing columns, try with basic data only
+    if (error && error.message && error.message.includes('column') && error.message.includes('does not exist')) {
+      console.log('⚠️ Column missing, trying with basic data only...');
+      console.log('❌ Error details:', error);
+      
+      const basicSellingPointData = {
+        name: req.body.name,
+        company_id: req.body.companyId || req.body.company_id,
+        business_type: req.body.businessType,
+        industry: req.body.industry,
+        siret: req.body.siret,
+        address: req.body.address_data?.street || req.body.address,
+        city: req.body.address_data?.city || req.body.city,
+        country: req.body.address_data?.country || req.body.country,
+        postal_code: req.body.address_data?.postalCode || req.body.postal_code,
+        phones: req.body.phones || [],
+        email: req.body.email,
+        created_by: req.body.created_by,
+        description: req.body.description,
+        created_at: req.body.created_at || new Date().toISOString(),
+        last_modified: new Date().toISOString()
+      };
+      
+      console.log('🔍 Basic selling point data:', basicSellingPointData);
+      
+      const result = await supabase
+        .from('selling_points')
+        .insert([basicSellingPointData])
+        .select(`
+          *,
+          companies:company_id (
+            id,
+            name
+          )
+        `);
+      
+      data = result.data;
+      error = result.error;
+    }
     
     if (error) {
       console.log('❌ Supabase POST error:', error);
@@ -223,11 +263,24 @@ app.post('/api/selling-points', async (req, res) => {
       companyName: item.companies?.name || 'Unknown Company',
       companyId: item.company_id,
       // Map database column names back to frontend field names
-      announcementProfiles: item.announcement_profiles,
-      logoHistory: item.logo_history,
-      socialMedia: item.social_media,
-      address: item.address_data,
-      address_data: item.address_data
+      announcementProfiles: item.announcement_profiles || req.body.announcementProfiles || [],
+      logoHistory: item.logo_history || req.body.logoHistory || [],
+      socialMedia: item.social_media || req.body.socialMedia || [],
+      address: item.address_data || req.body.address || {
+        street: item.address,
+        city: item.city,
+        country: item.country,
+        postalCode: item.postal_code
+      },
+      address_data: item.address_data || req.body.address || {},
+      contacts: item.contacts || req.body.contacts || [],
+      notes: item.notes || req.body.notes || [],
+      priority: item.priority || req.body.priority || 'Medium',
+      status: item.status || req.body.status || 'Active',
+      mobile: item.mobile || req.body.mobile,
+      position: item.position || req.body.position,
+      linkedin: item.linkedin || req.body.linkedin,
+      avatar: item.avatar || req.body.avatar
     }));
     
     console.log('✅ Selling point created:', transformedData[0]);
