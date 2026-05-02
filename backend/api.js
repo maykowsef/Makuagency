@@ -142,7 +142,18 @@ app.get('/api/selling-points', async (req, res) => {
     const transformedData = data.map(item => ({
       ...item,
       companyName: item.companies?.name || 'Unknown Company',
-      companyId: item.company_id
+      companyId: item.company_id,
+      // Map database column names back to frontend field names
+      announcementProfiles: item.announcement_profiles,
+      logoHistory: item.logo_history,
+      socialMedia: item.social_media,
+      address: item.address_data || {
+        street: item.address,
+        city: item.city,
+        country: item.country,
+        postalCode: item.postal_code
+      },
+      address_data: item.address_data
     }));
     
     console.log('✅ Selling points retrieved:', transformedData.length, 'items');
@@ -157,11 +168,38 @@ app.post('/api/selling-points', async (req, res) => {
   try {
     console.log('📤 POST /api/selling-points request:', req.body);
     
+    // Map frontend field names to database column names
     const sellingPointData = {
-      ...req.body,
+      name: req.body.name,
+      company_id: req.body.companyId || req.body.company_id,
+      business_type: req.body.businessType,
+      industry: req.body.industry,
+      siret: req.body.siret,
+      address: req.body.address_data?.street || req.body.address,
+      city: req.body.address_data?.city || req.body.city,
+      country: req.body.address_data?.country || req.body.country,
+      postal_code: req.body.address_data?.postalCode || req.body.postal_code,
+      phones: req.body.phones || [],
+      email: req.body.email,
+      created_by: req.body.created_by,
+      description: req.body.description,
+      announcement_profiles: req.body.announcementProfiles || [],
+      contacts: req.body.contacts || [],
+      logo_history: req.body.logoHistory || [],
+      notes: req.body.notes || [],
+      social_media: req.body.socialMedia || [],
+      priority: req.body.priority || 'Medium',
+      status: req.body.status || 'Active',
+      address_data: req.body.address || {},
+      mobile: req.body.mobile,
+      position: req.body.position,
+      linkedin: req.body.linkedin,
+      avatar: req.body.avatar,
       created_at: req.body.created_at || new Date().toISOString(),
       last_modified: new Date().toISOString()
     };
+    
+    console.log('🔍 Mapped selling point data:', sellingPointData);
     
     const { data, error } = await supabase
       .from('selling_points')
@@ -183,7 +221,13 @@ app.post('/api/selling-points', async (req, res) => {
     const transformedData = data.map(item => ({
       ...item,
       companyName: item.companies?.name || 'Unknown Company',
-      companyId: item.company_id
+      companyId: item.company_id,
+      // Map database column names back to frontend field names
+      announcementProfiles: item.announcement_profiles,
+      logoHistory: item.logo_history,
+      socialMedia: item.social_media,
+      address: item.address_data,
+      address_data: item.address_data
     }));
     
     console.log('✅ Selling point created:', transformedData[0]);
@@ -226,7 +270,18 @@ app.get('/api/selling-points/:id', async (req, res) => {
     const transformedData = {
       ...data,
       companyName: data.companies?.name || 'Unknown Company',
-      companyId: data.company_id
+      companyId: data.company_id,
+      // Map database column names back to frontend field names
+      announcementProfiles: data.announcement_profiles,
+      logoHistory: data.logo_history,
+      socialMedia: data.social_media,
+      address: data.address_data || {
+        street: data.address,
+        city: data.city,
+        country: data.country,
+        postalCode: data.postal_code
+      },
+      address_data: data.address_data
     };
     
     console.log('✅ Selling point retrieved by ID:', transformedData);

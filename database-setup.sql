@@ -53,6 +53,21 @@ CREATE TABLE IF NOT EXISTS selling_points (
   email TEXT,
   created_by JSONB,
   description TEXT,
+  -- Additional columns needed by frontend
+  announcement_profiles JSONB DEFAULT '[]',
+  contacts JSONB DEFAULT '[]',
+  logo_history JSONB DEFAULT '[]',
+  notes JSONB DEFAULT '[]',
+  social_media JSONB DEFAULT '[]',
+  priority TEXT DEFAULT 'Medium',
+  status TEXT DEFAULT 'Active',
+  -- Address fields as JSONB for structured data
+  address_data JSONB DEFAULT '{}',
+  -- Additional contact info
+  mobile TEXT,
+  position TEXT,
+  linkedin TEXT,
+  avatar TEXT,
   created_at TIMESTAMP DEFAULT NOW(),
   last_modified TIMESTAMP DEFAULT NOW()
 );
