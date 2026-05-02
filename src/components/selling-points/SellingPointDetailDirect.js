@@ -206,13 +206,13 @@ const SellingPointDetailDirect = ({
                             onUpdate={onUpdate}
                         />
                         <ContactsList
-                            contacts={contacts.filter(c => c.selling_point_id === sellingPoint.id)}
+                            contacts={(contacts || []).filter(c => c.selling_point_id === sellingPoint.id)}
                             onAdd={onAddContact}
                             onEdit={onEditContact}
                             onDelete={onDeleteContact}
                         />
                         <HistoryList
-                            activities={activities.filter(a => a.entity_id === sellingPoint.id && a.entity_type === 'selling_point')}
+                            activities={(activities || []).filter(a => a.entity_id === sellingPoint.id && a.entity_type === 'selling_point')}
                         />
                     </div>
                 </div>
