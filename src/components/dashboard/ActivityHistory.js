@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Clock, Search as SearchIcon, Eye, Edit, Trash2, Plus, LogIn, Filter, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
+import { safeToISOString, safeDate, isValidDate } from '../../utils/dateUtils';
 
 const ActivityHistory = ({ activityLog = [], onReplay }) => {
     const [filterType, setFilterType] = useState('All');
@@ -41,22 +42,15 @@ const ActivityHistory = ({ activityLog = [], onReplay }) => {
     };
 
     const filterByDate = (activity) => {
-        // Add date validation to prevent Invalid time value errors
+        // Use safe date validation to prevent Invalid time value errors
         if (!activity.timestamp) return false;
         
-        let activityDate;
-        try {
-            activityDate = new Date(activity.timestamp);
-            // Check if date is valid
-            if (isNaN(activityDate.getTime())) {
-                console.warn('Invalid date detected:', activity.timestamp);
-                return false;
-            }
-        } catch (error) {
-            console.warn('Date parsing error:', error, activity.timestamp);
+        if (!isValidDate(activity.timestamp)) {
+            console.warn('Invalid date detected:', activity.timestamp);
             return false;
         }
         
+        const activityDate = safeDate(activity.timestamp);
         const activityDateStr = activity.timestamp.split('T')[0];
 
         // Custom Date Picker Priority
@@ -87,22 +81,16 @@ const ActivityHistory = ({ activityLog = [], onReplay }) => {
         .filter(activity => filterType === 'All' || activity.type === filterType)
         .filter(filterByDate)
         .sort((a, b) => {
-            // Add date validation to sorting to prevent Invalid time value errors
-            try {
-                const dateA = a.timestamp ? new Date(a.timestamp) : new Date(0);
-                const dateB = b.timestamp ? new Date(b.timestamp) : new Date(0);
-                
-                // Check if dates are valid
-                if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) {
-                    console.warn('Invalid date in sorting:', { a: a.timestamp, b: b.timestamp });
-                    return 0;
-                }
-                
-                return dateB - dateA;
-            } catch (error) {
-                console.warn('Date sorting error:', error);
+            // Use safe date utilities for sorting to prevent Invalid time value errors
+            const dateA = safeDate(a.timestamp) || new Date(0);
+            const dateB = safeDate(b.timestamp) || new Date(0);
+            
+            if (!isValidDate(a.timestamp) || !isValidDate(b.timestamp)) {
+                console.warn('Invalid date in sorting:', { a: a.timestamp, b: b.timestamp });
                 return 0;
             }
+            
+            return dateB - dateA;
         });
 
     // Pagination Logic
@@ -113,19 +101,10 @@ const ActivityHistory = ({ activityLog = [], onReplay }) => {
     );
 
     const formatTimestamp = (timestamp) => {
-        // Add date validation to prevent Invalid time value errors
-        if (!timestamp) return 'Invalid Date';
-        
-        let date;
-        try {
-            date = new Date(timestamp);
-            // Check if date is valid
-            if (isNaN(date.getTime())) {
-                console.warn('Invalid date in formatTimestamp:', timestamp);
-                return 'Invalid Date';
-            }
-        } catch (error) {
-            console.warn('Date formatting error:', error, timestamp);
+        // Use safe date utilities to prevent Invalid time value errors
+        const date = safeDate(timestamp);
+        if (!date) {
+            console.warn('Invalid date in formatTimestamp:', timestamp);
             return 'Invalid Date';
         }
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -134,31 +113,24 @@ const ActivityHistory = ({ activityLog = [], onReplay }) => {
     const groupByDate = (activities) => {
         const groups = {};
         activities.forEach(activity => {
-            // Add date validation to prevent Invalid time value errors
+            // Use safe date utilities to prevent Invalid time value errors
+            const date = safeDate(activity.timestamp);
             let dateStr;
-            try {
-                if (!activity.timestamp) {
-                    dateStr = 'Invalid Date';
-                } else {
-                    const date = new Date(activity.timestamp);
-                    if (isNaN(date.getTime())) {
-                        console.warn('Invalid date in groupByDate:', activity.timestamp);
-                        dateStr = 'Invalid Date';
-                    } else {
-                        dateStr = date.toLocaleDateString(undefined, {
-                            weekday: 'long',
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                        });
-                    }
-                }
-            } catch (error) {
-                console.warn('Date grouping error:', error, activity.timestamp);
+            
+            if (!date) {
+                console.warn('Invalid date in groupByDate:', activity.timestamp);
                 dateStr = 'Invalid Date';
+            } else {
+                dateStr = date.toLocaleDateString(undefined, {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
             }
-            if (!groups[date]) groups[date] = [];
-            groups[date].push(activity);
+            
+            if (!groups[dateStr]) groups[dateStr] = [];
+            groups[dateStr].push(activity);
         });
         return groups;
     };
