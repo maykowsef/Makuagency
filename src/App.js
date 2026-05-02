@@ -1391,7 +1391,11 @@ const App = () => {
         return updated;
       });
 
-      logActivity('selling_point', `Created selling point: ${newPoint.name}`, { action: 'create', replayable: false });
+      try {
+        logActivity('selling_point', `Created selling point: ${newPoint.name}`, { action: 'create', replayable: false });
+      } catch (error) {
+        console.error('Error logging activity:', error);
+      }
       
       // Ensure state is updated before navigation
       setTimeout(() => {
