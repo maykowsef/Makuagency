@@ -22,7 +22,7 @@ const handleError = (res, error) => {
 // Root endpoint
 app.get('/', async (req, res) => {
   res.json({ 
-    message: 'Backend API is running!',
+    message: 'Backend API is running! v1.0.1',
     endpoints: [
       '/api/test',
       '/api/companies',

@@ -1616,7 +1616,7 @@ const App = () => {
           minisites={minisites}
           customTemplates={[]}
           onAddMinisite={handleAddMinisite}
-          onDeleteMinisite={onDeleteMinisite}
+          onDeleteMinisite={handleDeleteMinisite}
           companies={companies}
           contacts={contacts}
           onAddContact={handleQuickAddContact}
