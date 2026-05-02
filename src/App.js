@@ -509,6 +509,16 @@ const App = () => {
 
   useEffect(() => { localStorage.setItem('activityLog', JSON.stringify(activityLog)); }, [activityLog]);
 
+  // Activities State (alias for activityLog to prevent undefined errors)
+  const [activities, setActivities] = useState(() => {
+    const saved = localStorage.getItem('activityLog');
+    return saved ? JSON.parse(saved) : initialActivityLog;
+  });
+  useEffect(() => { 
+    // Keep activities in sync with activityLog
+    setActivities(activityLog);
+  }, [activityLog]);
+
   // Inventory State
   const [inventory, setInventory] = useState(() => {
     const saved = localStorage.getItem('inventory');
