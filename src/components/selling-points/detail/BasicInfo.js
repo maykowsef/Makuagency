@@ -2,6 +2,20 @@ import React from 'react';
 import { Building2, Edit, User, Mail, Globe, Hash, Clock, Phone, ExternalLink, MessageSquare, Music, Calendar } from 'lucide-react';
 
 const BasicInfo = ({ sp, onEdit, onNavigate, companies, setEditSection, setEditingItem, setShowEditModal }) => {
+    // COMPREHENSIVE NULL CHECKS
+    if (!sp || typeof sp !== 'object') {
+        return (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+                <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                        <Building2 className="w-5 h-5 text-indigo-600" />Basic Information
+                    </h3>
+                </div>
+                <p className="text-gray-500">Selling point data not available.</p>
+            </div>
+        );
+    }
+
     return (
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
             <div className="flex items-center justify-between mb-4">

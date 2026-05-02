@@ -10,6 +10,26 @@ const HistoryList = ({
     Pagination,
     formatDate
 }) => {
+    // COMPREHENSIVE NULL CHECKS
+    if (!sp || typeof sp !== 'object') {
+        return (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mt-6">
+                <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center">
+                            <History className="w-6 h-6 text-indigo-600" />
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold text-gray-900">History</h3>
+                            <p className="text-sm text-gray-500">Activity timeline</p>
+                        </div>
+                    </div>
+                </div>
+                <p className="text-gray-500">History data not available.</p>
+            </div>
+        );
+    }
+
     return (
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mt-6">
             <div className="flex items-center justify-between mb-6">

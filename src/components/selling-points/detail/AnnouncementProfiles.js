@@ -16,6 +16,21 @@ const AnnouncementProfiles = ({
     Pagination,
     ANNOUNCEMENT_SITES
 }) => {
+    // COMPREHENSIVE NULL CHECKS
+    if (!sp || typeof sp !== 'object') {
+        return (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden mt-6">
+                <div className="p-4 border-b border-gray-100 bg-gray-50/50">
+                    <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+                        <Megaphone className="w-4 h-4 text-indigo-600" /> Announcement Profiles
+                    </h3>
+                </div>
+                <div className="p-4">
+                    <p className="text-gray-500">Announcement profiles data not available.</p>
+                </div>
+            </div>
+        );
+    }
     const getHostname = (url) => {
         try {
             return new URL(url).hostname;

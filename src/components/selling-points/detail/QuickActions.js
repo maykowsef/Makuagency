@@ -14,6 +14,15 @@ const QuickActions = ({
     onEditMinisite,
     customTemplates = []
 }) => {
+    // COMPREHENSIVE NULL CHECKS
+    if (!sp || typeof sp !== 'object') {
+        return (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                <p className="text-gray-500">Selling point data not available.</p>
+            </div>
+        );
+    }
     const template = existingMinisite ? customTemplates.find(t => String(t.id) === String(existingMinisite.templateId)) : null;
     return (
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">

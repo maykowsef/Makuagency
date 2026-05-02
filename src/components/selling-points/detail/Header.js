@@ -4,6 +4,27 @@ import { ArrowLeft, Trash2, Check, AlertTriangle } from 'lucide-react';
 const Header = ({ sp, onBack, onDelete, onCheck, onFlagFaulty, onShowDeduplicate, setEditSection, setEditingItem, setShowEditModal, getPriorityColor, viewParams, userData }) => {
     const isAdmin = userData?.role === 'Administrator';
 
+    // COMPREHENSIVE NULL CHECKS
+    if (!sp || typeof sp !== 'object') {
+        return (
+            <div className="bg-white border-b border-gray-200 sticky top-0 z-30">
+                <div className="px-4 lg:px-8 py-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <button onClick={onBack} className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition-colors group">
+                                <ArrowLeft className="w-5 h-5 text-gray-600 group-hover:text-indigo-600" />
+                            </button>
+                            <div>
+                                <h1 className="text-2xl font-bold text-gray-900">Unknown Selling Point</h1>
+                                <span className="text-sm font-mono bg-gray-100 text-gray-600 px-2 py-0.5 rounded">ID: #N/A</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="bg-white border-b border-gray-200 sticky top-0 z-30">
             <div className="px-4 lg:px-8 py-4">
@@ -15,8 +36,8 @@ const Header = ({ sp, onBack, onDelete, onCheck, onFlagFaulty, onShowDeduplicate
                         </button>
                         <div>
                             <div className="flex items-center gap-3">
-                                <h1 className="text-2xl font-bold text-gray-900">{sp.name}</h1>
-                                <span className="text-sm font-mono bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded">ID: #{sp.id}</span>
+                                <h1 className="text-2xl font-bold text-gray-900">{sp.name || 'Unknown Selling Point'}</h1>
+                                <span className="text-sm font-mono bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded">ID: #{sp.id || 'N/A'}</span>
                                 {sp.status === 'Faulty' && (
                                     <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest bg-red-100 text-red-600 px-2 py-0.5 rounded-full border border-red-200 animate-pulse">
                                         <AlertTriangle className="w-3 h-3" /> Faulty Data

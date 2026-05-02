@@ -2,6 +2,22 @@ import React from 'react';
 import { Mail, Plus, Edit, Trash2 } from 'lucide-react';
 
 const EmailAddresses = ({ sp, onAdd, onEdit, onDelete }) => {
+    // COMPREHENSIVE NULL CHECKS
+    if (!sp || typeof sp !== 'object') {
+        return (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden mt-6">
+                <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
+                    <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+                        <Mail className="w-4 h-4 text-indigo-600" /> Email Addresses
+                    </h3>
+                </div>
+                <div className="p-4">
+                    <p className="text-gray-500">Email data not available.</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden mt-6">
             <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
