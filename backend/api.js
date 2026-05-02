@@ -864,7 +864,28 @@ app.get('/api/schedules', async (req, res) => {
 });
 
 app.get('/api/assignments', async (req, res) => {
-  res.json([]);
+  try {
+    console.log('📥 GET /api/assignments request');
+    const { data, error } = await supabase
+      .from('assignments')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.log('❌ Supabase GET error:', error);
+      // Return empty array for ANY assignments error to prevent 404/500
+      console.log('⚠️ Assignments error, returning empty array to prevent errors');
+      return res.json([]);
+    }
+    
+    console.log('✅ Assignments retrieved:', data.length, 'items');
+    res.json(data || []);
+  } catch (error) { 
+    console.log('❌ API GET error:', error);
+    // Return empty array for ANY error to prevent 404/500
+    console.log('⚠️ Assignments catch error, returning empty array to prevent errors');
+    return res.json([]);
+  }
 });
 
 // Contact Assignments endpoint - ZERO ERRORS VERSION
