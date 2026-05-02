@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     TrendingUp, Users, MapPin, Building2, Globe,
     Calendar, Clock, CheckCircle2, Target, Zap,
     ArrowRight, Activity, Award, Briefcase, Phone, BarChart3,
     Upload, Database
 } from 'lucide-react';
+import { safeNow, safeDate } from '../../utils/dateUtils';
 
 const EnhancedDashboard = ({
     sellingPoints = [],
@@ -22,7 +23,7 @@ const EnhancedDashboard = ({
     const isAdmin = currentUser?.role === 'Administrator';
 
     // Calculate today's stats
-    const today = new Date().toISOString().split('T')[0];
+    const today = safeNow().split('T')[0];
     const todayWork = dailyWork.find(w => w.date === today && w.userId === currentUser?.id) || {
         checks: [],
         creations: [],
@@ -39,10 +40,22 @@ const EnhancedDashboard = ({
         sellingPointsAdded: todayWork.creations?.length || 0,
 
         // From ActivityLog (Today)
-        scheduled: userActivities.filter(log => new Date(log.timestamp).toISOString().split('T')[0] === today && log.metadata?.action === 'schedule_business').length,
-        websitesMadeToday: userActivities.filter(log => new Date(log.timestamp).toISOString().split('T')[0] === today && log.type === 'minisite' && log.metadata?.action === 'create').length,
-        contacted: userActivities.filter(log => new Date(log.timestamp).toISOString().split('T')[0] === today && log.metadata?.action === 'add_call').length,
-        convinced: userActivities.filter(log => new Date(log.timestamp).toISOString().split('T')[0] === today && log.metadata?.action === 'mark_convinced').length,
+        scheduled: userActivities.filter(log => {
+            const logDate = safeDate(log.timestamp);
+            return logDate && logDate.toISOString().split('T')[0] === today && log.metadata?.action === 'schedule_business';
+        }).length,
+        websitesMadeToday: userActivities.filter(log => {
+            const logDate = safeDate(log.timestamp);
+            return logDate && logDate.toISOString().split('T')[0] === today && log.type === 'minisite' && log.metadata?.action === 'create';
+        }).length,
+        contacted: userActivities.filter(log => {
+            const logDate = safeDate(log.timestamp);
+            return logDate && logDate.toISOString().split('T')[0] === today && log.metadata?.action === 'add_call';
+        }).length,
+        convinced: userActivities.filter(log => {
+            const logDate = safeDate(log.timestamp);
+            return logDate && logDate.toISOString().split('T')[0] === today && log.metadata?.action === 'mark_convinced';
+        }).length,
 
         // Work Stats
         pendingWork: workAssignments.filter(w => w.assignedTo === currentUser?.id && w.status === 'Pending').length,
@@ -105,7 +118,7 @@ const EnhancedDashboard = ({
     // Real recent activity from activityLog
     const recentActivity = userActivities.slice(0, 5).map(log => ({
         action: log.description,
-        time: new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        time: safeDate(log.timestamp)?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || 'Invalid Time',
         type: log.type
     }));
 

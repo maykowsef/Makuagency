@@ -7,6 +7,7 @@ import {
     Download, Upload, RefreshCw, Eye, User, Globe,
     Settings, Briefcase
 } from 'lucide-react';
+import { safeNow, safeDate } from '../../utils/dateUtils';
 
 const WorkSection = ({
     onBack,
@@ -46,7 +47,7 @@ const WorkSection = ({
     const myTasks = isAdmin ? tasks : tasks.filter(t => t.assignedTo.includes(currentUser?.id));
     const faultyItems = sellingPoints.filter(sp => sp.status === 'Faulty');
     const myWorkStats = dailyWork.filter(w => w.userId === currentUser?.id);
-    const todayStats = myWorkStats.find(w => w.date === new Date().toISOString().split('T')[0]) || { checks: [], creations: [], tasks: [] };
+    const todayStats = myWorkStats.find(w => w.date === safeNow().split('T')[0]) || { checks: [], creations: [], tasks: [] };
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -90,7 +91,7 @@ const WorkSection = ({
             currentCount: parseInt(suiviForm.completed),
             status: suiviForm.status,
             lastUpdate: {
-                time: new Date().toISOString(),
+                time: safeNow(),
                 notes: suiviForm.notes,
                 difficulties: suiviForm.difficulties
             }
