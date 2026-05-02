@@ -73,9 +73,21 @@ const SellingPointDetail = ({
         );
     }
 
-    // Data Normalization (Logic from original file)
+    // Data Normalization (Logic from original file) - COMPREHENSIVE NULL CHECKS
+    if (!localSellingPoint || typeof localSellingPoint !== 'object') {
+        return (
+            <div className="flex h-screen items-center justify-center">
+                <div className="text-center">
+                    <p className="text-xl text-gray-600 mb-4">Selling Point not found or invalid data.</p>
+                    <button onClick={onBack} className="px-4 py-2 bg-indigo-600 text-white rounded-lg">Go Back</button>
+                </div>
+            </div>
+        );
+    }
+
     const sp = {
         ...localSellingPoint,
+        name: localSellingPoint.name || 'Unknown Selling Point',
         address1: localSellingPoint.address?.street || localSellingPoint.address1 || '',
         address2: localSellingPoint.address?.address2 || localSellingPoint.address2 || '',
         address3: localSellingPoint.address?.address3 || localSellingPoint.address3 || '',
@@ -107,11 +119,11 @@ const SellingPointDetail = ({
         description: typeof localSellingPoint.description === 'string' ? {
             text: localSellingPoint.description,
             addedBy: localSellingPoint.createdBy || { name: 'System' },
-            addedDate: localSellingPoint.createdAt || new Date().toISOString()
+            addedDate: localSellingPoint.createdAt || safeNow()
         } : {
             text: localSellingPoint.description?.text || 'No description',
             addedBy: localSellingPoint.description?.addedBy || { name: 'System' },
-            addedDate: localSellingPoint.description?.addedDate || new Date().toISOString(),
+            addedDate: localSellingPoint.description?.addedDate || safeNow(),
             modifiedBy: localSellingPoint.description?.modifiedBy || []
         },
 
